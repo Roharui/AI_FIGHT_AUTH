@@ -1,5 +1,6 @@
 import express from "express";
-
+import { auth } from "./auth/router/auth.controller";
+import { connections } from "./db";
 class App {
   public app: express.Application;
 
@@ -8,10 +9,12 @@ class App {
   }
 
   constructor() {
+    connections();
+
     this.app = express();
-    this.app.get("/", (_: express.Request, res: express.Response) => {
-      res.send("Hello World");
-    });
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: true }));
+    this.app.use("/auth", auth());
   }
 }
 
