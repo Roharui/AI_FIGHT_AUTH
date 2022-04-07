@@ -1,9 +1,9 @@
 import { Entity, Column, BeforeInsert } from "typeorm";
-import * as bcrypt from "bcrypt";
-import { Common } from "./common";
+import { BaseEntity } from "./base.entity";
+import { setHash } from "../../utils/bcrypt";
 
 @Entity()
-export class User extends Common {
+export class User extends BaseEntity {
   @Column({ length: 20 })
   user_id!: string;
 
@@ -18,7 +18,6 @@ export class User extends Common {
 
   @BeforeInsert()
   async setPassword(password: string): Promise<void> {
-    const salt = await bcrypt.genSalt();
-    this.password = await bcrypt.hash(password || this.password, salt);
+    this.password = await setHash(password || this.password);
   }
 }

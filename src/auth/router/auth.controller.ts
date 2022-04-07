@@ -1,22 +1,25 @@
 import express from "express";
-import { getRepository } from "typeorm";
-import { User } from "../../db/entity/user.entity";
+import { AuthService } from "../service/auth.service";
 
 function auth(): express.Router {
   const auth = express.Router();
-  const userRepository = getRepository(User);
+  const service = new AuthService();
 
   auth.post(
     "/register",
     async (req: express.Request, res: express.Response) => {
       const data = req.body;
-
-      data["isActive"] = true;
-
-      const user = await userRepository.save(data as User);
-      res.json(user);
+      res.json(service.register(data));
     }
   );
+
+  auth.post("/login", async (req: express.Request, res: express.Response) => {
+    const data = req.body;
+
+    const token = await service.login(data);
+
+    res.json({ token });
+  });
 
   return auth;
 }

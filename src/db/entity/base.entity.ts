@@ -6,7 +6,7 @@ import {
 } from "typeorm";
 
 @Entity()
-export class Common {
+export class BaseEntity {
   @PrimaryGeneratedColumn({ unsigned: true }) //unsigned when you need larger upper numeric range
   id!: number;
 
