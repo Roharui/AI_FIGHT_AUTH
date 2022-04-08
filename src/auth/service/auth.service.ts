@@ -8,6 +8,12 @@ type LoginInfo = {
   password: string;
 };
 
+type UserInfo = {
+  user_id: string;
+  nickname: string;
+  isActive: boolean;
+};
+
 class AuthService {
   private userRepository: Repository<User>;
 
@@ -30,6 +36,25 @@ class AuthService {
     }
 
     return jwt.sign({ id: user.id }, process.env.SECRET_KEY as string);
+  }
+
+  async resolve(token: string): Promise<UserInfo | null> {
+    const data = jwt.verify(
+      token,
+      process.env.SECRET_KEY as string
+    ) as jwt.JwtPayload;
+
+    const user = await this.userRepository.findOne({ where: { id: data.id } });
+
+    if (user === null) {
+      return null;
+    }
+
+    return {
+      user_id: user.user_id,
+      nickname: user.nickname,
+      isActive: user.isActive,
+    };
   }
 }
 

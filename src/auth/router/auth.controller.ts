@@ -21,6 +21,18 @@ function auth(): express.Router {
     res.json({ token });
   });
 
+  auth.post("/resolve", async (req: express.Request, res: express.Response) => {
+    const { token } = req.body;
+
+    const user = await service.resolve(token);
+
+    if (!user?.isActive) {
+      res.json(null);
+    }
+
+    res.json(user);
+  });
+
   return auth;
 }
 
